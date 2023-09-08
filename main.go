@@ -4,4 +4,6 @@ func init() {
 	BuildImage("./worker", "worker-image")
 }
 
-func main() {}
+func main() {
+	RunImage("worker-image")
+}
