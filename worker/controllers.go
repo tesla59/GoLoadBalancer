@@ -18,6 +18,7 @@ func HelloResponse(w http.ResponseWriter, r *http.Request) {
 	DB.First(&Worker)
 	Worker.SuccessfulRequests++
 	Worker.TotalRequests = Worker.SuccessfulRequests + Worker.FailedRequests
+	DB.Save(&Worker)
 
 	// Add a delay of 500 ms to replicate some labor intensive task
 	time.Sleep(time.Millisecond * 500)
