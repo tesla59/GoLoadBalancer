@@ -44,7 +44,7 @@ func BuildImage(srcPath string, imageTag string) {
 	}
 }
 
-func RunImage(image string, count int) {
+func RunImage(image string, count int, initialPort int) {
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
@@ -54,17 +54,25 @@ func RunImage(image string, count int) {
 
 	// pulling image is disabled considering image will be built manually only
 	for i := 0; i < count; i++ {
+		hostPort, err := nat.NewPort("tcp", fmt.Sprint(initialPort))
+		if err != nil {
+			panic(err)
+		}
+		targetPort, err := nat.NewPort("tcp", fmt.Sprint(initialPort+i))
+		if err != nil {
+			panic(err)
+		}
 		containerConfig := container.Config{
 			Image:        image,
-			ExposedPorts: nat.PortSet{"8080/tcp": struct{}{}},
+			ExposedPorts: nat.PortSet{hostPort: struct{}{}},
 		}
 
 		hostConfig := container.HostConfig{
 			PortBindings: nat.PortMap{
-				"8080/tcp": []nat.PortBinding{
+				hostPort: []nat.PortBinding{
 					{
 						HostIP:   "0.0.0.0",
-						HostPort: fmt.Sprint(8080 + i),
+						HostPort: targetPort.Port(),
 					},
 				},
 			},
