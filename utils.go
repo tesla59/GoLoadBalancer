@@ -5,14 +5,19 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path"
 	"strings"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/client"
 	"github.com/docker/docker/pkg/archive"
 	"github.com/docker/go-connections/nat"
 )
+
+const DatabaseTargetPath string = "/app/worker-stats.sql"
+const DatabaseFileName string = "worker-stats.sql"
 
 func BuildImage(srcPath string, imageTag string) {
 	ctx := context.Background()
@@ -74,6 +79,14 @@ func RunImage(image string, count int, initialPort int) {
 						HostIP:   "0.0.0.0",
 						HostPort: targetPort.Port(),
 					},
+				},
+			},
+			Mounts:[]mount.Mount{
+				{
+					Type: mount.TypeBind,
+					Source: path.Join(PWD, DatabaseFileName),
+					Target: DatabaseTargetPath,
+					ReadOnly: false,
 				},
 			},
 		}

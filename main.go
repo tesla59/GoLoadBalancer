@@ -8,6 +8,7 @@ import (
 
 func init() {
 	BuildImage("./worker", "worker-image")
+	PWD, _ = os.Getwd()
 
 	yamlFile, err := os.ReadFile("config.yaml")
 	if err != nil {
@@ -19,6 +20,7 @@ func init() {
 }
 
 var config Config
+var PWD string
 
 func main() {
 }
