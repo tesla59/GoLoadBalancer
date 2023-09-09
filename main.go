@@ -7,10 +7,10 @@ import (
 )
 
 func init() {
-	BuildImage("./worker", "worker-image")
+	BuildImage(WorkerSrcPath, DefaultProtocol)
 	PWD, _ = os.Getwd()
 
-	yamlFile, err := os.ReadFile("config.yaml")
+	yamlFile, err := os.ReadFile(DefaultConfigFilePath)
 	if err != nil {
 		panic(err)
 	}
@@ -18,9 +18,6 @@ func init() {
 		panic(err)
 	}
 }
-
-var config Config
-var PWD string
 
 func main() {
 }

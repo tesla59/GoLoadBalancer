@@ -16,9 +16,6 @@ import (
 	"github.com/docker/go-connections/nat"
 )
 
-const DatabaseTargetPath string = "/app/worker-stats.sql"
-const DatabaseFileName string = "worker-stats.sql"
-
 func BuildImage(srcPath string, imageTag string) {
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
@@ -59,11 +56,11 @@ func RunImage(image string, count int, initialPort int) {
 
 	// pulling image is disabled considering image will be built manually only
 	for i := 0; i < count; i++ {
-		hostPort, err := nat.NewPort("tcp", fmt.Sprint(initialPort))
+		hostPort, err := nat.NewPort(DefaultProtocol, fmt.Sprint(initialPort))
 		if err != nil {
 			panic(err)
 		}
-		targetPort, err := nat.NewPort("tcp", fmt.Sprint(initialPort+i))
+		targetPort, err := nat.NewPort(DefaultProtocol, fmt.Sprint(initialPort+i))
 		if err != nil {
 			panic(err)
 		}
