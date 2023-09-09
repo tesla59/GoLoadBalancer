@@ -41,7 +41,22 @@ func GetWorkerStats(w http.ResponseWriter, r *http.Request) {
 	var statsResponse StatsResponse
 
 	DB.Find(&Stats)
+	totalResponseTime, totalFailedReq, totalSuccessfulReq, totalTotalReq := float64(0), 0, 0, 0
 
+	// Setting total fields first
+	for i := range Stats {
+		totalResponseTime += Stats[i].AverageResponseTime
+		totalFailedReq += Stats[i].FailedRequests
+		totalSuccessfulReq += Stats[i].SuccessfulRequests
+		totalTotalReq += Stats[i].TotalRequests
+	}
+
+	statsResponse.AverageResponseTime = append(statsResponse.AverageResponseTime, map[string]float64{"total": totalResponseTime})
+	statsResponse.FailedRequests = append(statsResponse.FailedRequests, map[string]int{"total": totalFailedReq})
+	statsResponse.SuccessfulRequests = append(statsResponse.SuccessfulRequests, map[string]int{"total": totalSuccessfulReq})
+	statsResponse.TotalRequests = append(statsResponse.TotalRequests, map[string]int{"total": totalTotalReq})
+
+	// Setting worker fields later
 	for i := range Stats {
 		statsResponse.AverageResponseTime = append(statsResponse.AverageResponseTime, map[string]float64{
 			Stats[i].WorkerID: Stats[i].AverageResponseTime,
