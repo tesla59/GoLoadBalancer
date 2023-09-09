@@ -27,14 +27,12 @@ func BuildImage(srcPath string, imageTag string) {
 		panic(buildContextErr)
 	}
 
-	buildResponse, buildErr := cli.ImageBuild(
-		ctx,
-		buildContext,
-		types.ImageBuildOptions{
-			Dockerfile: "Dockerfile",
-			Tags:       []string{strings.ToLower(imageTag)},
-		},
-	)
+	imageBuildOptions := types.ImageBuildOptions{
+		Dockerfile: "Dockerfile",
+		Tags:       []string{strings.ToLower(imageTag)},
+	}
+
+	buildResponse, buildErr := cli.ImageBuild(ctx, buildContext, imageBuildOptions)
 	if buildErr != nil {
 		panic(buildErr)
 	}
@@ -56,22 +54,23 @@ func RunImage(image string, count int) {
 
 	// pulling image is disabled considering image will be built manually only
 	for i := 0; i < count; i++ {
-		resp, err := cli.ContainerCreate(ctx,
-			&container.Config{
-				Image:        image,
-				ExposedPorts: nat.PortSet{"8080/tcp": struct{}{}},
-			},
-			&container.HostConfig{
-				PortBindings: nat.PortMap{
-					"8080/tcp": []nat.PortBinding{
-						{
-							HostIP:   "0.0.0.0",
-							HostPort: fmt.Sprint(8080 + i),
-						},
+		containerConfig := container.Config{
+			Image:        image,
+			ExposedPorts: nat.PortSet{"8080/tcp": struct{}{}},
+		}
+
+		hostConfig := container.HostConfig{
+			PortBindings: nat.PortMap{
+				"8080/tcp": []nat.PortBinding{
+					{
+						HostIP:   "0.0.0.0",
+						HostPort: fmt.Sprint(8080 + i),
 					},
 				},
 			},
-			nil, nil, "")
+		}
+
+		resp, err := cli.ContainerCreate(ctx, &containerConfig, &hostConfig, nil, nil, "")
 		if err != nil {
 			panic(err)
 		}
