@@ -7,7 +7,7 @@ import (
 )
 
 func HelloResponse(w http.ResponseWriter, r *http.Request) {
-	message := map[string]string{"message": "hello from " + HostName}
+	message := map[string]string{"message": "hello from container: " + HostName}
 	messageJSON, _ := json.Marshal(message)
 	w.Header().Set("Content-Type", "application/json")
 
