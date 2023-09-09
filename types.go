@@ -12,10 +12,10 @@ type Config struct {
 
 
 type WorkerStats struct {
-	WorkerID           int       `db:"worker_id"`
-	Timestamp          time.Time `db:"timestamp"`
-	SuccessfulRequests int       `db:"successful_requests"`
-	FailedRequests     int       `db:"failed_requests"`
-	TotalRequests      int       `db:"total_requests"`
-	AverageResponseTime float64   `db:"average_response_time"`
+	WorkerID            string `gorm:"primaryKey"`
+	Timestamp           time.Time
+	SuccessfulRequests  int
+	FailedRequests      int
+	TotalRequests       int
+	AverageResponseTime float64
 }
