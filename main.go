@@ -4,6 +4,8 @@ import (
 	"os"
 
 	"gopkg.in/yaml.v2"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
 func init() {
@@ -17,6 +19,13 @@ func init() {
 	if err := yaml.Unmarshal(yamlFile, &config); err != nil {
 		panic(err)
 	}
+
+	db, err := gorm.Open(sqlite.Open(DatabaseFileName), &gorm.Config{})
+	if err != nil {
+		panic("failed to connect database")
+	}
+
+	db.AutoMigrate(&WorkerStats{})
 }
 
 func main() {
