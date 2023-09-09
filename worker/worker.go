@@ -12,6 +12,8 @@ func init() {
 }
 
 func main() {
+	InitDB()
+
 	http.HandleFunc("/", HelloResponse)
 
 	if err := http.ListenAndServe(":8080", nil); err != nil {
