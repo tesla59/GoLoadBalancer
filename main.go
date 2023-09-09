@@ -9,7 +9,7 @@ import (
 )
 
 func init() {
-	BuildImage(WorkerSrcPath, DefaultProtocol)
+	BuildImage(WorkerSrcPath, DefaultWorkerImageTag)
 	PWD, _ = os.Getwd()
 
 	yamlFile, err := os.ReadFile(DefaultConfigFilePath)
