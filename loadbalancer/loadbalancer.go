@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -24,14 +25,18 @@ func main() {
 }
 
 func loadBalanceHandler(w http.ResponseWriter, r *http.Request) {
-	backendServer := selectBackendServer()
+	backendServer, err := selectBackendServer()
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusServiceUnavailable)
+        return
+    }
 
 	// Proxy the request to the selected backend server.
-	proxy := createReverseProxy(backendServer.URL)
+	proxy := httputil.NewSingleHostReverseProxy(backendServer.URL)
 	proxy.ServeHTTP(w, r)
 }
 
-func selectBackendServer() *Server {
+func selectBackendServer() (*Server, error) {
 	mutex.Lock()
 	defer mutex.Unlock()
 
@@ -40,14 +45,10 @@ func selectBackendServer() *Server {
 		currentIndex = (currentIndex + 1) % len(ServerPool)
 		server := &ServerPool[currentIndex]
 		if server.Health {
-			return server
+			return server, nil
 		}
 	}
 
-	// No healthy server found, use the first one as a fallback.
-	return &ServerPool[0]
-}
-
-func createReverseProxy(target *url.URL) *httputil.ReverseProxy {
-	return httputil.NewSingleHostReverseProxy(target)
+	// No healthy server found, return error
+	return nil, errors.New("No healthy server found")
 }
