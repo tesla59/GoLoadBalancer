@@ -108,9 +108,17 @@ func StopContainers(IDs []string) {
 	}
 	defer cli.Close()
 
-	for i:= range IDs {
+	for i := range IDs {
 		if err := cli.ContainerStop(ctx, IDs[i], container.StopOptions{}); err != nil {
 			panic(err)
 		}
 	}
+}
+
+func GetServerPool(n int) (Pool []string) {
+	precedingURL := "http://localhost:"
+	for i := 0; i < n; i++ {
+		Pool = append(Pool, precedingURL+fmt.Sprint(8080+i))
+	}
+	return
 }

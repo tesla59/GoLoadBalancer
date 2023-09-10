@@ -34,8 +34,8 @@ func init() {
 }
 
 func main() {
-	RunImage(DefaultWorkerImageTag, 10, 8080)
-	loadbalancer.InitLoadBalancer([]string{"http://localhost:8080", "http://localhost:8081"})
+	RunImage(DefaultWorkerImageTag, config.Worker, 8080)
+	loadbalancer.InitLoadBalancer(GetServerPool(config.Worker))
 	go loadbalancer.NewLoadBalancer(":8000")
 
 	go gracefulShutdown()
