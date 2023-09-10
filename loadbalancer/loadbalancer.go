@@ -8,6 +8,7 @@ import (
 
 func InitLoadBalancer(urls []string) error {
 	SetupLoadBalancerRoutes()
+	go monitorBackendServerHealth()
 	return LoadServerPool(urls)
 }
 
