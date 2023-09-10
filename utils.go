@@ -78,11 +78,11 @@ func RunImage(image string, count int, initialPort int) {
 					},
 				},
 			},
-			Mounts:[]mount.Mount{
+			Mounts: []mount.Mount{
 				{
-					Type: mount.TypeBind,
-					Source: path.Join(PWD, DatabaseFileName),
-					Target: DatabaseTargetPath,
+					Type:     mount.TypeBind,
+					Source:   path.Join(PWD, DatabaseFileName),
+					Target:   DatabaseTargetPath,
 					ReadOnly: false,
 				},
 			},
@@ -97,5 +97,20 @@ func RunImage(image string, count int, initialPort int) {
 			panic(err)
 		}
 		ContainerIDs = append(ContainerIDs, resp.ID)
+	}
+}
+
+func StopContainers(IDs []string) {
+	ctx := context.Background()
+	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+	if err != nil {
+		panic(err)
+	}
+	defer cli.Close()
+
+	for i:= range IDs {
+		if err := cli.ContainerStop(ctx, IDs[i], container.StopOptions{}); err != nil {
+			panic(err)
+		}
 	}
 }
