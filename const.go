@@ -9,3 +9,4 @@ const WorkerSrcPath = "./worker"
 
 var config Config
 var PWD string
+var ContainerIDs []string

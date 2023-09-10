@@ -96,5 +96,6 @@ func RunImage(image string, count int, initialPort int) {
 		if err := cli.ContainerStart(ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
 			panic(err)
 		}
+		ContainerIDs = append(ContainerIDs, resp.ID)
 	}
 }
