@@ -8,28 +8,35 @@ import (
 )
 
 func main() {
-    backendServer1, _ := url.Parse("http://localhost:8080")
-    backendServer2, _ := url.Parse("http://localhost:8081")
+	URLs := []string{"http://localhost:8080", "http://localhost:8081"}
+	LoadServerPool(URLs)
 
-    ServerPool = append(ServerPool, Server{URL: backendServer1, Health: true, HealthChan: make(chan bool)})
-    ServerPool = append(ServerPool, Server{URL: backendServer2, Health: true, HealthChan: make(chan bool)})
-
-    go monitorBackendServerHealth()
+	go monitorBackendServerHealth()
 
 	http.HandleFunc("/", loadBalanceHandler)
 
 	// Start the load balancer server.
-    if err := http.ListenAndServe(":8000", nil); err != nil {
+	if err := http.ListenAndServe(":8000", nil); err != nil {
 		panic(err)
+	}
+}
+
+func LoadServerPool(urls []string) {
+	for _, v := range urls {
+		validURL, err := url.Parse(v)
+		if err != nil {
+			panic(err)
+		}
+		ServerPool = append(ServerPool, Server{URL: validURL, Health: true, HealthChan: make(chan bool)})
 	}
 }
 
 func loadBalanceHandler(w http.ResponseWriter, r *http.Request) {
 	backendServer, err := selectBackendServer()
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusServiceUnavailable)
-        return
-    }
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusServiceUnavailable)
+		return
+	}
 
 	// Proxy the request to the selected backend server.
 	proxy := httputil.NewSingleHostReverseProxy(backendServer.URL)
