@@ -50,6 +50,7 @@ func gracefulShutdown() {
 		<-s
 		log.Println("Shutting down gracefully.")
 		StopContainers(ContainerIDs)
+		RemoveContainers(ContainerIDs)
 		os.Exit(0)
 	}()
 }

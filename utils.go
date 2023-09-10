@@ -116,6 +116,21 @@ func StopContainers(IDs []string) {
 	}
 }
 
+func RemoveContainers(IDs []string) {
+	ctx := context.Background()
+	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+	if err != nil {
+		panic(err)
+	}
+	defer cli.Close()
+
+	for i := range IDs {
+		if err := cli.ContainerRemove(ctx, IDs[i], types.ContainerRemoveOptions{}); err != nil {
+			panic(err)
+		}
+	}
+}
+
 func GetServerPool(n int) (Pool []string) {
 	precedingURL := "http://localhost:"
 	for i := 0; i < n; i++ {
