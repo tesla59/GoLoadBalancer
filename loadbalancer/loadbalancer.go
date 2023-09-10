@@ -29,5 +29,6 @@ func SetupLoadBalancerRoutes() {
 }
 
 func NewLoadBalancer(port string) error {
+	log.Println("Starting Load Balancer on port ", port)
 	return http.ListenAndServe(port, nil)
 }
