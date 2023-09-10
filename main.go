@@ -9,8 +9,6 @@ import (
 	"gopkg.in/yaml.v2"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-
-	"gocomet/loadbalancer"
 )
 
 func init() {
@@ -34,9 +32,10 @@ func init() {
 }
 
 func main() {
+	// Spawn Worker Images
 	RunImage(DefaultWorkerImageTag, config.Worker, 8080)
-	loadbalancer.InitLoadBalancer(GetServerPool(config.Worker))
-	go loadbalancer.NewLoadBalancer(":8000")
+	// Spawn Load Balancers
+	RunLoadBalancers(config.Pool, 8000)
 
 	go gracefulShutdown()
 	forever := make(chan int)

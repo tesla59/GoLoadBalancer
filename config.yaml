@@ -1,5 +1,5 @@
-worker: 2
-pool: 20
-stats-dir: /tmp/stats
-avg-delay: 0.5
-failure: 12
+worker: 10 # number of workers to spawn
+pool: 2 # number of load balancer to spawn
+stats-dir: /tmp/stats # location of the SQL DB
+avg-delay: 0.5 # Average Delay of the API Req
+failure: 12 # Failure Rate of API Req

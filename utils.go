@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"gocomet/loadbalancer"
 	"io"
 	"os"
 	"path"
@@ -121,4 +122,11 @@ func GetServerPool(n int) (Pool []string) {
 		Pool = append(Pool, precedingURL+fmt.Sprint(8080+i))
 	}
 	return
+}
+
+func RunLoadBalancers(count int, initialPort int) {
+	loadbalancer.InitLoadBalancer(GetServerPool(config.Worker))
+	for i := 0; i < count; i++ {
+		go loadbalancer.NewLoadBalancer(":" + fmt.Sprint(initialPort+i))
+	}
 }
