@@ -6,6 +6,8 @@ import (
 	"gopkg.in/yaml.v2"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+
+	"gocomet/loadbalancer"
 )
 
 func init() {
@@ -29,4 +31,6 @@ func init() {
 }
 
 func main() {
+	loadbalancer.InitLoadBalancer([]string{"http://localhost:8080", "http://localhost:8081"})
+	loadbalancer.NewLoadBalancer(":8000")
 }

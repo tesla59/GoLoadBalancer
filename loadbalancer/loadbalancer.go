@@ -1,61 +1,32 @@
 package loadbalancer
 
 import (
-	"errors"
+	"log"
 	"net/http"
-	"net/http/httputil"
 	"net/url"
 )
 
-func main() {
-	URLs := []string{"http://localhost:8080", "http://localhost:8081"}
-	LoadServerPool(URLs)
-
-	go monitorBackendServerHealth()
-
-	http.HandleFunc("/", loadBalanceHandler)
-
-	// Start the load balancer server.
-	if err := http.ListenAndServe(":8000", nil); err != nil {
-		panic(err)
-	}
+func InitLoadBalancer(urls []string) error {
+	SetupLoadBalancerRoutes()
+	return LoadServerPool(urls)
 }
 
-func LoadServerPool(urls []string) {
+func LoadServerPool(urls []string) error {
 	for _, v := range urls {
 		validURL, err := url.Parse(v)
 		if err != nil {
-			panic(err)
+			return err
 		}
 		ServerPool = append(ServerPool, Server{URL: validURL, Health: true, HealthChan: make(chan bool)})
 	}
+	log.Println("Server Pool successfully initialized")
+	return nil
 }
 
-func loadBalanceHandler(w http.ResponseWriter, r *http.Request) {
-	backendServer, err := selectBackendServer()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusServiceUnavailable)
-		return
-	}
-
-	// Proxy the request to the selected backend server.
-	proxy := httputil.NewSingleHostReverseProxy(backendServer.URL)
-	proxy.ServeHTTP(w, r)
+func SetupLoadBalancerRoutes() {
+	http.HandleFunc("/", loadBalanceHandler)
 }
 
-func selectBackendServer() (*Server, error) {
-	mutex.Lock()
-	defer mutex.Unlock()
-
-	// Find a healthy backend server using round-robin.
-	for i := 0; i < len(ServerPool); i++ {
-		currentIndex = (currentIndex + 1) % len(ServerPool)
-		server := &ServerPool[currentIndex]
-		if server.Health {
-			return server, nil
-		}
-	}
-
-	// No healthy server found, return error
-	return nil, errors.New("No healthy server found")
+func NewLoadBalancer(port string) error {
+	return http.ListenAndServe(port, nil)
 }
