@@ -13,6 +13,8 @@ func main() {
     ServerPool = append(ServerPool, Server{URL: backendServer1, Health: true, HealthChan: make(chan bool)})
     ServerPool = append(ServerPool, Server{URL: backendServer2, Health: true, HealthChan: make(chan bool)})
 
+    go monitorBackendServerHealth()
+
 	http.HandleFunc("/", loadBalanceHandler)
 
 	// Start the load balancer server.
