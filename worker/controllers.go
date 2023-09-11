@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"net/http"
-	"time"
 )
 
 type StatsResponse struct {
@@ -11,6 +10,14 @@ type StatsResponse struct {
 	FailedRequests      []map[string]int
 	TotalRequests       []map[string]int
 	AverageResponseTime []map[string]float64
+}
+
+type Config struct {
+	Worker    int     `yaml:"worker"`
+	Pool      int     `yaml:"pool"`
+	StatsDir  string  `yaml:"stats-dir"`
+	AvgDelay  float64 `yaml:"avg-delay"`
+	Failure   int     `yaml:"failure"`
 }
 
 func HelloResponse(w http.ResponseWriter, r *http.Request) {
@@ -27,8 +34,8 @@ func HelloResponse(w http.ResponseWriter, r *http.Request) {
 	Worker.TotalRequests = Worker.SuccessfulRequests + Worker.FailedRequests
 	DB.Save(&Worker)
 
-	// Add a delay of 500 ms to replicate some labor intensive task
-	time.Sleep(time.Millisecond * 500)
+	// Average Delay
+	Sleep(int(config.AvgDelay))
 
 	if _, err := w.Write(messageJSON); err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)

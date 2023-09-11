@@ -4,6 +4,7 @@ go 1.21.0
 
 require (
 	github.com/glebarez/sqlite v1.9.0
+	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/gorm v1.25.2
 )
 
