@@ -15,11 +15,13 @@ type StatsResponse struct {
 }
 
 type Config struct {
-	Worker   int     `yaml:"worker"`
-	Pool     int     `yaml:"pool"`
-	StatsDir string  `yaml:"stats-dir"`
-	AvgDelay float64 `yaml:"avg-delay"`
-	Failure  int     `yaml:"failure"`
+	Worker           int     `yaml:"worker"`
+	Pool             int     `yaml:"pool"`
+	StatsDir         string  `yaml:"stats-dir"`
+	AvgDelay         float64 `yaml:"avg-delay"`
+	Failure          int     `yaml:"failure"`
+	LoadBalancerPort int     `yaml:"load-balancer-port"`
+	WorkerPort       int     `yaml:"Worker-port"`
 }
 
 func HelloResponse(w http.ResponseWriter, r *http.Request) {

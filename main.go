@@ -34,9 +34,9 @@ func init() {
 
 func main() {
 	// Spawn Worker Images
-	RunImage(DefaultWorkerImageTag, config.Worker, 8080)
+	RunImage(DefaultWorkerImageTag, config.Worker, config.WorkerPort)
 	// Spawn Load Balancers
-	RunLoadBalancers(config.Pool, 8000)
+	RunLoadBalancers(config.Pool, config.LoadBalancerPort)
 
 	go gracefulShutdown()
 	forever := make(chan int)

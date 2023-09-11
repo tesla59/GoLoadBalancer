@@ -3,3 +3,5 @@ pool: 2 # number of load balancer to spawn
 stats-dir: worker-stats.db # location of the SQL DB
 avg-delay: 500 # Average Delay of the API Req (in ms)
 failure: 12 # Failure Rate of API Req
+load-balancer-port: 5050 # Initial Port of Load Balancer: if more than one LB is created, port is incremented by 1
+worker-port: 6000 # Initial Port of Worker: if more than one worker is created, port is incremented by 1

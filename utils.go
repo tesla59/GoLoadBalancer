@@ -57,7 +57,7 @@ func RunImage(image string, count int, initialPort int) {
 
 	// pulling image is disabled considering image will be built manually only
 	for i := 0; i < count; i++ {
-		hostPort, err := nat.NewPort(DefaultProtocol, fmt.Sprint(initialPort))
+		hostPort, err := nat.NewPort(DefaultProtocol, fmt.Sprint(WorkerPort))
 		if err != nil {
 			panic(err)
 		}
@@ -140,7 +140,7 @@ func RemoveContainers(IDs []string) {
 func GetServerPool(n int) (Pool []string) {
 	precedingURL := "http://localhost:"
 	for i := 0; i < n; i++ {
-		Pool = append(Pool, precedingURL+fmt.Sprint(8080+i))
+		Pool = append(Pool, precedingURL+fmt.Sprint(config.WorkerPort+i))
 	}
 	return
 }

@@ -6,6 +6,7 @@ const DefaultWorkerImageTag = "worker-image"
 const DefaultConfigFileName = "config.yaml"
 const ConfigTargetPath = "/app/config.yaml"
 const WorkerSrcPath = "./worker"
+const WorkerPort = 8080
 
 var DatabaseFileName = "worker-stats.db"
 var config Config
