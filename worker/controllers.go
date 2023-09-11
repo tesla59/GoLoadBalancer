@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"math/rand"
 	"net/http"
 	"time"
 )
@@ -14,36 +15,42 @@ type StatsResponse struct {
 }
 
 type Config struct {
-	Worker    int     `yaml:"worker"`
-	Pool      int     `yaml:"pool"`
-	StatsDir  string  `yaml:"stats-dir"`
-	AvgDelay  float64 `yaml:"avg-delay"`
-	Failure   int     `yaml:"failure"`
+	Worker   int     `yaml:"worker"`
+	Pool     int     `yaml:"pool"`
+	StatsDir string  `yaml:"stats-dir"`
+	AvgDelay float64 `yaml:"avg-delay"`
+	Failure  int     `yaml:"failure"`
 }
 
 func HelloResponse(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
+	Worker := WorkerStats{
+		WorkerID: HostName,
+	}
+	DB.First(&Worker)
+
 	message := map[string]string{"message": "hello from container: " + HostName}
 	messageJSON, _ := json.Marshal(message)
 	w.Header().Set("Content-Type", "application/json")
 
-	Worker := WorkerStats{
-		WorkerID: HostName,
-	}
+	isASuccessfulRequest := rand.Intn(100) > config.Failure
 
-	DB.First(&Worker)
-	Worker.SuccessfulRequests++
-	Worker.TotalRequests = Worker.SuccessfulRequests + Worker.FailedRequests
-	defer DB.Save(&Worker)
+	if isASuccessfulRequest {
+		Worker.SuccessfulRequests++
+		// Average Delay
+		Sleep(int(config.AvgDelay))
 
-	// Average Delay
-	Sleep(int(config.AvgDelay))
-
-	if _, err := w.Write(messageJSON); err != nil {
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
+		if _, err := w.Write(messageJSON); err != nil {
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+	} else {
+		Worker.FailedRequests++
+		http.Error(w, "Randomized Server Error", http.StatusInternalServerError)
 	}
 	Worker.AverageResponseTime = float64(time.Since(start).Milliseconds())
+	Worker.TotalRequests = Worker.SuccessfulRequests + Worker.FailedRequests
+	DB.Save(&Worker)
 }
 
 func GetWorkerStats(w http.ResponseWriter, r *http.Request) {
