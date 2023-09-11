@@ -22,6 +22,7 @@ func init() {
 	if err := yaml.Unmarshal(yamlFile, &config); err != nil {
 		panic(err)
 	}
+	DatabaseFileName = config.StatsDir
 
 	db, err := gorm.Open(sqlite.Open(DatabaseFileName), &gorm.Config{})
 	if err != nil {
