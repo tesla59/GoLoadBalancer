@@ -86,6 +86,12 @@ func RunImage(image string, count int, initialPort int) {
 					Target:   DatabaseTargetPath,
 					ReadOnly: false,
 				},
+				{
+					Type:     mount.TypeBind,
+					Source:   path.Join(PWD, DefaultConfigFileName),
+					Target:   ConfigTargetPath,
+					ReadOnly: true,
+				},
 			},
 		}
 

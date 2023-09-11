@@ -15,7 +15,7 @@ func init() {
 	BuildImage(WorkerSrcPath, DefaultWorkerImageTag)
 	PWD, _ = os.Getwd()
 
-	yamlFile, err := os.ReadFile(DefaultConfigFilePath)
+	yamlFile, err := os.ReadFile(DefaultConfigFileName)
 	if err != nil {
 		panic(err)
 	}

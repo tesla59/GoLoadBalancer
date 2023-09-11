@@ -4,7 +4,8 @@ const DatabaseTargetPath = "/app/worker-stats.db"
 const DatabaseFileName = "worker-stats.db"
 const DefaultProtocol = "tcp"
 const DefaultWorkerImageTag = "worker-image"
-const DefaultConfigFilePath = "./config.yaml"
+const DefaultConfigFileName = "config.yaml"
+const ConfigTargetPath = "/app/config.yaml"
 const WorkerSrcPath = "./worker"
 
 var config Config
