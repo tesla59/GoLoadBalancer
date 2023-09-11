@@ -68,7 +68,7 @@ func GetWorkerStats(w http.ResponseWriter, r *http.Request) {
 		totalTotalReq += Stats[i].TotalRequests
 	}
 
-	statsResponse.AverageResponseTime = append(statsResponse.AverageResponseTime, map[string]float64{"total": totalResponseTime})
+	statsResponse.AverageResponseTime = append(statsResponse.AverageResponseTime, map[string]float64{"total": totalResponseTime / float64(len(Stats))})
 	statsResponse.FailedRequests = append(statsResponse.FailedRequests, map[string]int{"total": totalFailedReq})
 	statsResponse.SuccessfulRequests = append(statsResponse.SuccessfulRequests, map[string]int{"total": totalSuccessfulReq})
 	statsResponse.TotalRequests = append(statsResponse.TotalRequests, map[string]int{"total": totalTotalReq})
