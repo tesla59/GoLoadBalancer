@@ -1,4 +1,4 @@
-module gocomet
+module github.com/tesla59/goloadbalancer
 
 go 1.21.0
 

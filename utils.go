@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"gocomet/loadbalancer"
+	"github.com/tesla59/goloadbalancer/loadbalancer"
 	"io"
 	"os"
 	"path"
