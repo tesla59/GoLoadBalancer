@@ -1,9 +1,21 @@
-# Go Comet
+# Go Load Balancer
+
+The project was started as assessment for the organization [GoComet](https://www.gocomet.com/). Now the project is made open-source for references.
+
+## What is GoLoadBalancer?
+GoLoadBalancer is an automatic scaling load balancer with round-robin functionality.
 
 The application consists of 3 parts (modules)
-1. Config Manager
-2. Load Balancer
-3. Worker
+1. Load-balancer: 
+   - Takes all web requests and pass it to available workers with round-robin functionality.
+
+2. WebApp:
+	- /api/v1/hello : This endpoint will respond with a JSON message after an delay. The delay is specified in config.yaml.
+	- /worker/stats : This endpoint will provide the statistics of all workers. It is important to note that the statistics is updated and saved on each request made to the /api/v1/hello endpoint, and are stored in the database provided in the config.yaml.
+
+3. Configuration Manager:
+   - Config Manager reads config.yaml as in input and depending on the contents of the config file, it spawns the number of load balancer or workers. Also contains the average failure rate and average delay
+   - Load Balancer are spawned as child processes and Workers are spawned as docker containers
 
 ## Config Manager
 Config Manager is the entrypoint in the application and is defined as main package. It is responsible for reading the config file (config.yaml), spawn load balancer and spawn worker nodes.
@@ -106,15 +118,7 @@ Uses `math/rand` library to set the average response time and failure rates as m
 2. `go run .`
 This should get all the libraries necessary and start the server with default configs
 
-Assumptions made:
-1. Stats data can be stored in SQLite DB
-2. Workers can be spawned as Docker container
-3. Failure and Average Response time is induced by the code itself, its not external factor
-4. Multiple load balancer can be spawned
-5. Multiple workers cab be spawned
-6. Ports of multiple load balancer/worker is incremented by 1 (i.e  if first worker is spawned at 6000, second will get 6001 assigned)
-
 The architecture is inspired from K3s and tries to implement kubernetes operator
 Notes:
 1. Please delete worker-stats.db incase of any bug 
-2. There might be few bugs which were not resolved due to time constraints but it doesn't impact the application in severe manner
+
